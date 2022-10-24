@@ -89,6 +89,22 @@ def signup(uname: str, passwd: str):
     pending_users[uname] = user
     return user
 
+@app.post("/ch01/account/profile/add", response_model=UserProfile)
+def add_profile(uname: str, 
+                fname: str = Form(...), 
+                lname: str = Form(...),
+                mid_init: str = Form(...),
+                user_age: int = Form(...),
+                sal: float = Form(...),
+                bday: str = Form(...),
+                utype: UserType = Form(...)):
+    if valid_users.get(uname) == None:
+        return UserProfile(firstname=None, lastname=None, middle_initial=None, age=None, birthday=None, salary=None, user_type=None)
+    
+    profile = UserProfile(firstname=fname, lastname=lname, middle_initial=mid_init, age=user_age, birthday=datetime.strptime(bday, '%m/%d/%Y'), salary=sal, user_type=utype)
+    valid_profiles[uname] = profile
+    return profile
+
 @app.put("/ch01/account/profile/update/{username}")
 def update_profile(username: str, id: UUID, new_profile: UserProfile):
     if valid_users.get(username) == None:
